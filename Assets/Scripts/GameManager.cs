@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour
     public int remainingFlips;
 
     [Header("Buttons")]
-    public Button playButton;  
+    public Button playButton;
+    public Button betModule;
 
     [Header("UI References")]
     public TextMeshProUGUI flipCountText;
@@ -72,7 +73,7 @@ public class GameManager : MonoBehaviour
                 if (rewardCalculation != null)
                 {
                     rewardCalculation.CalculateRewards();
-                    // ❌ No reset here — wait until next play
+                    // No reset here — wait until next play
                 }
                 else
                 {
@@ -104,6 +105,10 @@ public class GameManager : MonoBehaviour
 
         if (playButton != null)
             playButton.interactable = false;
+
+        if (betModule != null)
+            betModule.interactable = false;
+       
     }
 
     public void AddExtraFlips(int amount)
@@ -133,12 +138,18 @@ public class GameManager : MonoBehaviour
             flipCountText.text = $"Flips Left: {remainingFlips}";
             if (playButton != null)
                 playButton.interactable = false;
+
+            if (betModule != null)
+                betModule.interactable = false;
         }
         else
         {
             flipCountText.text = "Flips Over";
             if (playButton != null)
                 playButton.interactable = true;
+
+            if (betModule != null)
+                betModule.interactable = true;
         }
 
         flipCountText.gameObject.SetActive(true);

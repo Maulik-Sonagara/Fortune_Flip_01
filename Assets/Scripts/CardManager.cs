@@ -25,8 +25,16 @@ public class CardManager : MonoBehaviour
     private List<CardData> currentDeck = new List<CardData>();
     private bool isAnimating = false;
 
+    public static CardManager Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
+        RewardCalculation.Instance.UpdateBalanceUI();
         InitializeDeck();
         if (playButton != null)
             playButton.onClick.AddListener(StartGame);
@@ -58,6 +66,25 @@ public class CardManager : MonoBehaviour
     {
         // Prevent running while already animating
         if (isAnimating) return;
+
+        float turboMultiplier = TurboModeController.Instance != null && TurboModeController.Instance.isTurboOn ? 2f : 1f;
+
+        // Apply turbo speed
+        cardMoveSpeed = 1500f * turboMultiplier;
+        delayBetweenCards = 0.15f / turboMultiplier;
+        delayBeforeTableCards = 1f / turboMultiplier;
+
+        if (RewardCalculation.Instance.playerBalance >= RewardCalculation.Instance.baseBetAmount)
+        {
+            RewardCalculation.Instance.playerBalance -= RewardCalculation.Instance.baseBetAmount;
+            RewardCalculation.Instance.UpdateBalanceUI();
+        }
+        else
+        {
+            Debug.LogWarning("Not enough balance to play!");
+            return; // stop round start
+        }
+
         GameManager.Instance.SetAnimating(true);
         GameManager.Instance.StartNewRound();
 
@@ -158,8 +185,10 @@ public class CardManager : MonoBehaviour
     {
         List<Button> cardButtons = new List<Button>();
 
-        cardMoveSpeed = 7000;
-        delayBetweenCards = 0.1f;
+        float turboMultiplier = TurboModeController.Instance != null && TurboModeController.Instance.isTurboOn ? 2f : 1f;
+
+        cardMoveSpeed = 7000f * turboMultiplier;
+        delayBetweenCards = (turboMultiplier > 1f) ? 0f : 0.1f;
 
         for (int i = 0; i < count; i++)
         {

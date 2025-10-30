@@ -2,10 +2,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class RewardCalculation : MonoBehaviour
 {
+    [Header("Player Balance")]
+    public float playerBalance = 1000f;
+    public TextMeshProUGUI balanceText;
+
     [Header("Settings")]
     public float baseBetAmount = 1f;
 
@@ -20,7 +25,14 @@ public class RewardCalculation : MonoBehaviour
     private List<string> hitAmounts = new List<string>();
     private Coroutine cycleCoroutine;
 
-    // 🔹 New control flag
+    public static RewardCalculation Instance { get; private set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    // New control flag
     private bool isCycleActive = false;
 
     private void OnEnable() // auto calls before creation
@@ -37,6 +49,16 @@ public class RewardCalculation : MonoBehaviour
     {
         BetServiceBehaviour.Instance.OnBetChanged -= setbetvalue;
     }
+
+
+    // -------------------- GAME BALANCE --------------------
+
+    public void UpdateBalanceUI()
+    {
+        if (balanceText != null)
+            balanceText.text = $"{playerBalance:0.00}";
+    }
+
 
     // -------------------- CARD FLIP --------------------
     public void OnCardFlipped(CardData flippedCard, CardFlip flip)
@@ -137,11 +159,27 @@ public class RewardCalculation : MonoBehaviour
     public void CalculateRewards()
     {
         Debug.Log($"All flips done → Total Reward: ${totalReward:F2}");
-
+        AddRewardToBalance(totalReward);
         StopCycle();
         isCycleActive = true; // Allow cycle to start
         cycleCoroutine = StartCoroutine(DelayedShowTotalAndStartCycle());
     }
+
+    public void AddRewardToBalance(float reward)
+    {
+        playerBalance += reward;
+        UpdateBalanceUI();
+
+        // Show reward in Win UI
+        if (WinUIManager.Instance != null)
+        {
+            WinUIManager.Instance.rewardText.text = "Round Reward";
+            WinUIManager.Instance.rewardAmountText.text = $"+${reward:0.00}";
+        }
+
+        Debug.Log($"Reward added: ${reward:0.00}. New balance: ${playerBalance:0.00}");
+    }
+
 
     public void StopCycle()
     {

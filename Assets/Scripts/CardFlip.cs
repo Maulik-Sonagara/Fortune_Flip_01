@@ -60,7 +60,11 @@ public class CardFlip : MonoBehaviour
     {
         isFlipping = true;
 
-        float halfTime = flipDuration / 2f;
+        // 🔹 Apply Turbo Mode
+        float turboMultiplier = (TurboModeController.Instance != null && TurboModeController.Instance.isTurboOn) ? 2f : 1f;
+        float adjustedDuration = flipDuration / turboMultiplier;
+
+        float halfTime = adjustedDuration / 2f;
         Quaternion startRot = Quaternion.identity;
         Quaternion midRot = Quaternion.Euler(0, 90, 0);
         Quaternion endRot = Quaternion.identity;
@@ -94,10 +98,10 @@ public class CardFlip : MonoBehaviour
 
         isFlipping = false;
 
-        // ✨ Trigger glow only after complete flip
         if (isHitCard)
             StartCoroutine(GlowEffect());
     }
+
 
     private IEnumerator GlowEffect()
     {
