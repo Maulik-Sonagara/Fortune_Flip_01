@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Bilions.Foundation.Bet;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,6 +22,21 @@ public class RewardCalculation : MonoBehaviour
 
     // 🔹 New control flag
     private bool isCycleActive = false;
+
+    private void OnEnable() // auto calls before creation
+    {
+        BetServiceBehaviour.Instance.OnBetChanged += setbetvalue;
+    }
+
+    private void setbetvalue(float obj)
+    {
+        baseBetAmount = obj;
+    }
+
+    private void OnDisable() // auto calls before destroy
+    {
+        BetServiceBehaviour.Instance.OnBetChanged -= setbetvalue;
+    }
 
     // -------------------- CARD FLIP --------------------
     public void OnCardFlipped(CardData flippedCard, CardFlip flip)

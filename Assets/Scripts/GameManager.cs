@@ -10,7 +10,10 @@ public class GameManager : MonoBehaviour
 
     [Header("Game State")]
     public int CardSelected;
-    private int remainingFlips;
+    public int remainingFlips;
+
+    [Header("Buttons")]
+    public Button playButton;  
 
     [Header("UI References")]
     public TextMeshProUGUI flipCountText;
@@ -79,15 +82,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 🔹 Call this from Play button (at start of new round)
+    // Call this from Play button (at start of new round)
     public void StartNewRound()
     {
-        Debug.Log("🔁 Starting new round... Resetting rewards and flips.");
+        Debug.Log("Starting new round... Resetting rewards and flips.");
 
-        // ✅ Clear previous cycle and hits
+        // Clear previous cycle and hits
         rewardCalculation.ResetRewards();
 
-        // ✅ Reset flip chances for new selection
+        // Reset flip chances for new selection
         CardSelected = CardSelectorUI.instance.selectedCards;
         remainingFlips = CardSelected;
         UpdateFlipText();
@@ -98,6 +101,9 @@ public class GameManager : MonoBehaviour
         // Optionally clear UI text for clean start
         WinUIManager.Instance.rewardText.text = "";
         WinUIManager.Instance.rewardAmountText.text = "";
+
+        if (playButton != null)
+            playButton.interactable = false;
     }
 
     public void AddExtraFlips(int amount)
@@ -123,9 +129,17 @@ public class GameManager : MonoBehaviour
         if (flipCountText == null) return;
 
         if (remainingFlips > 0)
+        {
             flipCountText.text = $"Flips Left: {remainingFlips}";
+            if (playButton != null)
+                playButton.interactable = false;
+        }
         else
+        {
             flipCountText.text = "Flips Over";
+            if (playButton != null)
+                playButton.interactable = true;
+        }
 
         flipCountText.gameObject.SetActive(true);
     }

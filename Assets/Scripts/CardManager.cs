@@ -42,6 +42,10 @@ public class CardManager : MonoBehaviour
 
     public void ShuffleDeck()
     {
+        // -------------------------
+        // RTP can be included
+        // -------------------------
+
         for (int i = 0; i < currentDeck.Count; i++)
         {
             int rand = Random.Range(i, currentDeck.Count);
@@ -210,13 +214,13 @@ public class CardManager : MonoBehaviour
                     }
 
 
-                    // Re-enable play button when chances are over
-                    if (!GameManager.Instance.CanFlipCard() && playButton != null)
-                    {
-                        playButton.interactable = true;
-                        GameManager.Instance.SetAnimating(false);
+                    //// Re-enable play button when chances are over
+                    //if (!GameManager.Instance.CanFlipCard() && playButton != null)
+                    //{
+                    //    playButton.interactable = true;
+                    //    GameManager.Instance.SetAnimating(false);
 
-                    }
+                    //}
 
                 }
             });
