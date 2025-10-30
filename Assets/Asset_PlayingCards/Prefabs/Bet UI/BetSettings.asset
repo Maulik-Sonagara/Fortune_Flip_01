@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 446933394, guid: ebfe486e92594c04f8dd817ea5e7dffc, type: 3}
+  m_Name: BetSettings
+  m_EditorClassIdentifier: 
+  minBet: 0.2
+  maxBet: 20
+  step: 0.2
+  defaultBet: 0.2
+  BetOptions:
+  - 0.2
+  - 0.4
+  - 0.6
+  - 0.8
+  - 1
+  - 2
+  - 3
+  - 5
+  - 10
+  - 20

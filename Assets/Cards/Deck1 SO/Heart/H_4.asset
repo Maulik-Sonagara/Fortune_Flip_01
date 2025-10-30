@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b995cb6125eabdf44b0eb72e669325cd, type: 3}
+  m_Name: H_4
+  m_EditorClassIdentifier: 
+  cardName: HFour
+  suit: 0
+  rank: 4
+  cardValue: 0
+  cardPrefab: {fileID: 7697628963257564056, guid: 6c49563f05e0e894fb7c44fee9be52e3, type: 3}
