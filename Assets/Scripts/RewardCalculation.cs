@@ -39,7 +39,6 @@ public class RewardCalculation : MonoBehaviour
             Debug.Log("JOKER flipped! +2 extra flips");
 
             flip.isHitCard = true;
-
             GameManager.Instance.AddExtraFlips(2);
             totalReward += baseBetAmount;
 
@@ -54,32 +53,42 @@ public class RewardCalculation : MonoBehaviour
             return;
         }
 
-        // Match by rank only
-        bool isMatch = false;
+        // Count matches by rank in player hand
+        int matchCount = 0;
         foreach (CardData playerCard in CardDetection.Instance.playerCards)
         {
             if (playerCard != null && playerCard.rank == flippedCard.rank)
             {
-                isMatch = true;
-                flip.isHitCard = true;
-                break;
+                matchCount++;
             }
         }
 
-        if (isMatch)
+        if (matchCount > 0)
         {
+            flip.isHitCard = true;
             AudioManager.Instance.PlayWin();
+
+            // Reward multiplied by how many same rank cards in hand
             float multiplier = GetMultiplier(flippedCard.payoutGroup);
-            float reward = baseBetAmount * multiplier;
-            totalReward += reward;
+            float rewardPerMatch = baseBetAmount * multiplier;
+            float totalCardReward = rewardPerMatch * matchCount;
+            totalReward += totalCardReward;
 
-            string msg = $"HIT! {flippedCard.rank}";
-            string amt = $"$ {reward:F2}";
+            string suitName = flippedCard.suit.ToString();
+            string msg;
 
-            Debug.Log($"{msg} ({flippedCard.payoutGroup}) → {amt}");
+            if (matchCount > 1)
+                msg = $"HIT! {flippedCard.rank} of {suitName} ×{matchCount} Matches";
+            else
+                msg = $"HIT! {flippedCard.rank} of {suitName} ×{matchCount}";
+                
+            string amt = $"${rewardPerMatch:F2} × {matchCount} = ${totalCardReward:F2}";
 
-            WinUIManager.Instance.rewardAmountText.text = amt;
+
+            Debug.Log($"{msg} → {matchCount} match(es) → {amt}");
+
             WinUIManager.Instance.rewardText.text = msg;
+            WinUIManager.Instance.rewardAmountText.text = amt;
 
             hitMessages.Add(msg);
             hitAmounts.Add(amt);
@@ -89,10 +98,12 @@ public class RewardCalculation : MonoBehaviour
             // Missed flip
             AudioManager.Instance.PlayLose();
             Debug.Log($"MISS: {flippedCard.rank} ({flippedCard.payoutGroup}) → +$0.00");
-            WinUIManager.Instance.rewardAmountText.text = "MISS";
+
             WinUIManager.Instance.rewardText.text = "No Match!";
+            WinUIManager.Instance.rewardAmountText.text = "MISS";
         }
     }
+
 
     private float GetMultiplier(PayoutGroup group)
     {
