@@ -22,7 +22,7 @@ public class RewardCalculation : MonoBehaviour
     private bool isCycleActive = false;
 
     // -------------------- CARD FLIP --------------------
-    public void OnCardFlipped(CardData flippedCard)
+    public void OnCardFlipped(CardData flippedCard, CardFlip flip)
     {
         if (flippedCard == null) return;
 
@@ -37,6 +37,8 @@ public class RewardCalculation : MonoBehaviour
         {
             AudioManager.Instance.PlayJoker();
             Debug.Log("JOKER flipped! +2 extra flips");
+
+            flip.isHitCard = true;
 
             GameManager.Instance.AddExtraFlips(2);
             totalReward += baseBetAmount;
@@ -59,6 +61,7 @@ public class RewardCalculation : MonoBehaviour
             if (playerCard != null && playerCard.rank == flippedCard.rank)
             {
                 isMatch = true;
+                flip.isHitCard = true;
                 break;
             }
         }

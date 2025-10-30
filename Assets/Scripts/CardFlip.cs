@@ -4,22 +4,49 @@ using System.Collections;
 
 public class CardFlip : MonoBehaviour
 {
-    public Image frontImage;
-    public Image backImage;
+    public static CardFlip Instance { get; private set; }
+
+    [Header("Card Faces")]
+    public Image frontImage;  // "Image"
+    public Image backImage;   // "ImageBack"
     public float flipDuration = 0.5f;
 
+    [Header("Glow Settings")]
+    public Color glowColor = Color.red;
+    public float glowDuration = 1.0f;
+    public bool isHitCard = false;
+
+    public Image glowBorder;
     private bool isFront = true;
     private bool isFlipping = false;
     public bool isFlipped = false;
 
     public bool IsFront => isFront;
 
+    private void Awake()
+    {
+        Instance = this;
+
+        // Automatically find the GlowBorder child
+        Transform glow = transform.Find("GlowBorder");
+        if (glow != null)
+        {
+            glowBorder = glow.GetComponent<Image>();
+            if (glowBorder != null)
+                glowBorder.gameObject.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: GlowBorder child not found!");
+        }
+    }
+
     public void SetFaceUp(bool showFront)
     {
         isFront = showFront;
         frontImage.gameObject.SetActive(showFront);
         backImage.gameObject.SetActive(!showFront);
-        transform.rotation = Quaternion.identity; // reset rotation
+        transform.rotation = Quaternion.identity;
     }
 
     public void FlipCard()
@@ -49,7 +76,7 @@ public class CardFlip : MonoBehaviour
             yield return null;
         }
 
-        // Swap face midway
+        // Swap faces midway
         isFront = !isFront;
         frontImage.gameObject.SetActive(isFront);
         backImage.gameObject.SetActive(!isFront);
@@ -66,5 +93,48 @@ public class CardFlip : MonoBehaviour
         }
 
         isFlipping = false;
+
+        // ✨ Trigger glow only after complete flip
+        if (isHitCard)
+            StartCoroutine(GlowEffect());
+    }
+
+    private IEnumerator GlowEffect()
+    {
+        if (glowBorder == null) yield break;
+
+        glowBorder.gameObject.SetActive(true);
+        float hue = 0f;
+        float pulseTimer = 0f;
+
+        while (isHitCard)
+        {
+            // Shift hue over time for rainbow animation
+            hue += Time.deltaTime * 0.25f; // hue cycle speed
+            if (hue > 1f) hue -= 1f;
+
+            // Calculate pulsing alpha
+            pulseTimer += Time.deltaTime * (1f / glowDuration);
+            float alpha = Mathf.Abs(Mathf.Sin(pulseTimer * Mathf.PI)); // smooth pulse (0→1→0)
+
+            // Apply color (HSV to RGB)
+            Color shiftingColor = Color.HSVToRGB(hue, 1f, 1f);
+            shiftingColor.a = alpha;
+
+            glowBorder.color = shiftingColor;
+
+            yield return null; // wait for next frame
+        }
+
+        glowBorder.gameObject.SetActive(false);
+    }
+
+
+    public void ResetCard()
+    {
+        isHitCard = false;
+        isFlipped = false;
+        if (glowBorder != null)
+            glowBorder.gameObject.SetActive(false);
     }
 }

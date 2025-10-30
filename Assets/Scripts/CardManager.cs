@@ -202,7 +202,7 @@ public class CardManager : MonoBehaviour
                         {
                             RewardCalculation rewardCalc = FindObjectOfType<RewardCalculation>();
                             if (rewardCalc != null)
-                                rewardCalc.OnCardFlipped(id.cardData);
+                                rewardCalc.OnCardFlipped(id.cardData, flip);
                         }
 
                         GameManager.Instance.UseFlipChance();
