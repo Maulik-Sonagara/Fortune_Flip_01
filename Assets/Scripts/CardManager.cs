@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
+    private float turboMultiplier = 1f;
+
     [Header("References")]
     public CardDatabase cardDatabase;
     public Transform tableArea;
@@ -35,10 +37,21 @@ public class CardManager : MonoBehaviour
     void Start()
     {
         RewardCalculation.Instance.UpdateBalanceUI();
+
         InitializeDeck();
         if (playButton != null)
             playButton.onClick.AddListener(StartGame);
+
+        if (TurboModeController.Instance != null)
+            TurboModeController.Instance.OnTurboChanged += UpdateTurboSpeed;
     }
+
+    private void UpdateTurboSpeed(bool isTurbo)
+    {
+        turboMultiplier = isTurbo ? 2f : 1f;
+        Debug.Log("Turbo multiplier changed to " + turboMultiplier);
+    }
+
 
     public void InitializeDeck()
     {
@@ -78,6 +91,7 @@ public class CardManager : MonoBehaviour
         {
             RewardCalculation.Instance.playerBalance -= RewardCalculation.Instance.baseBetAmount;
             RewardCalculation.Instance.UpdateBalanceUI();
+            
         }
         else
         {
@@ -177,7 +191,8 @@ public class CardManager : MonoBehaviour
                 flip.SetFaceUp(true); // show front
 
             yield return MoveCardToHandPosition(rect, i);
-            yield return new WaitForSeconds(delayBetweenCards);
+            yield return new WaitForSeconds(delayBetweenCards / turboMultiplier);
+
         }
     }
 
@@ -254,7 +269,8 @@ public class CardManager : MonoBehaviour
                 }
             });
 
-            yield return new WaitForSeconds(delayBetweenCards);
+            yield return new WaitForSeconds(delayBetweenCards / turboMultiplier);
+
         }
 
         // After all cards placed, enable flipping
@@ -276,10 +292,18 @@ public class CardManager : MonoBehaviour
 
         while (Vector3.Distance(card.position, targetPos) > 1f)
         {
-            card.position = Vector3.MoveTowards(card.position, targetPos, cardMoveSpeed * Time.deltaTime);
+            float speed = cardMoveSpeed * turboMultiplier;
+            card.position = Vector3.MoveTowards(card.position, targetPos, speed * Time.deltaTime);
             yield return null;
         }
     }
+
+    private void OnDestroy()
+    {
+        if (TurboModeController.Instance != null)
+            TurboModeController.Instance.OnTurboChanged -= UpdateTurboSpeed;
+    }
+
 
     private IEnumerator MoveCardToTablePosition(RectTransform card, int index)
     {
@@ -294,7 +318,8 @@ public class CardManager : MonoBehaviour
 
         while (Vector3.Distance(card.position, targetPos) > 1f)
         {
-            card.position = Vector3.MoveTowards(card.position, targetPos, cardMoveSpeed * Time.deltaTime);
+            float speed = cardMoveSpeed * turboMultiplier;
+            card.position = Vector3.MoveTowards(card.position, targetPos, speed * Time.deltaTime);
             yield return null;
         }
     }

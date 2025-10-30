@@ -8,7 +8,7 @@ using UnityEngine;
 public class RewardCalculation : MonoBehaviour
 {
     [Header("Player Balance")]
-    public float playerBalance = 1000f;
+    [System.NonSerialized] public float playerBalance;
     public TextMeshProUGUI balanceText;
 
     [Header("Settings")]
@@ -30,6 +30,13 @@ public class RewardCalculation : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        playerBalance = PlayerPrefs.GetFloat("balance", 1000f);
+        Debug.Log($"Loaded balance from prefs: {playerBalance}");
+    }
+
+    private void Start()
+    {
+        UpdateBalanceUI();
     }
 
     // New control flag
@@ -56,7 +63,15 @@ public class RewardCalculation : MonoBehaviour
     public void UpdateBalanceUI()
     {
         if (balanceText != null)
+        {
             balanceText.text = $"{playerBalance:0.00}";
+        }
+
+        // Save immediately when updated
+        PlayerPrefs.SetFloat("balance", playerBalance);
+        PlayerPrefs.Save();
+
+        Debug.Log($"Balance saved: {playerBalance}");
     }
 
 
@@ -120,7 +135,7 @@ public class RewardCalculation : MonoBehaviour
                 msg = $"HIT! {flippedCard.rank} of {suitName} ×{matchCount} Matches";
             else
                 msg = $"HIT! {flippedCard.rank} of {suitName} ×{matchCount}";
-                
+
             string amt = $"${rewardPerMatch:F2} × {matchCount} = ${totalCardReward:F2}";
 
 
@@ -168,6 +183,7 @@ public class RewardCalculation : MonoBehaviour
     public void AddRewardToBalance(float reward)
     {
         playerBalance += reward;
+        PlayerPrefs.SetFloat("balance", playerBalance);
         UpdateBalanceUI();
 
         // Show reward in Win UI
@@ -245,4 +261,11 @@ public class RewardCalculation : MonoBehaviour
 
         Debug.Log("Cycle stopped gracefully.");
     }
+
+    private void OnApplicationQuit()
+    {
+        PlayerPrefs.SetFloat("balance", playerBalance);
+        PlayerPrefs.Save();
+    }
+
 }

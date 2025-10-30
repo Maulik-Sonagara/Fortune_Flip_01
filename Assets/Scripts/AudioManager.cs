@@ -11,6 +11,8 @@ public class AudioManager : MonoBehaviour
     public AudioSource JokerSource;
     public AudioSource loseSource;
     public AudioSource bgMusicSource;
+    public AudioSource cashRegister;
+    public AudioSource cashDeduct;
 
     [Header("Turbo Settings")]
     public float normalPitch = 1f;
@@ -45,6 +47,8 @@ public class AudioManager : MonoBehaviour
     public void PlayJoker() => PlaySound(JokerSource);
     public void PlayWin() => PlaySound(winSource);
     public void PlayLose() => PlaySound(loseSource);
+    public void PlayCashDeduct() => PlaySound(cashDeduct);
+    public void PlayCashRegister() => PlaySound(cashRegister);
 
     private void PlaySound(AudioSource source)
     {
