@@ -108,6 +108,7 @@ public class CardFlip : MonoBehaviour
         if (glowBorder == null) yield break;
 
         glowBorder.gameObject.SetActive(true);
+        glowBorder.GetComponent<RectTransform>().localPosition = Vector3.zero;
         float hue = 0f;
         float pulseTimer = 0f;
 

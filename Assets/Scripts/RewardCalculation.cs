@@ -30,7 +30,7 @@ public class RewardCalculation : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        playerBalance = PlayerPrefs.GetFloat("balance", 1000f);
+        playerBalance = PlayerPrefs.GetFloat("balance", 5000f);
         Debug.Log($"Loaded balance from prefs: {playerBalance}");
     }
 
