@@ -60,7 +60,7 @@ public class CardFlip : MonoBehaviour
     {
         isFlipping = true;
 
-        // 🔹 Apply Turbo Mode
+        // Apply Turbo Mode
         float turboMultiplier = (TurboModeController.Instance != null && TurboModeController.Instance.isTurboOn) ? 2f : 1f;
         float adjustedDuration = flipDuration / turboMultiplier;
 
@@ -71,7 +71,7 @@ public class CardFlip : MonoBehaviour
 
         float t = 0f;
 
-        // Rotate to 90°
+        // Rotate to 90
         while (t < halfTime)
         {
             t += Time.deltaTime;

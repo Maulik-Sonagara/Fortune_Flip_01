@@ -175,6 +175,9 @@ public class RewardCalculation : MonoBehaviour
     {
         Debug.Log($"All flips done → Total Reward: ${totalReward:F2}");
         AddRewardToBalance(totalReward);
+        // Inform RTP tracker about this round
+        RTPController.Instance.RegisterWin(totalReward);
+
         StopCycle();
         isCycleActive = true; // Allow cycle to start
         cycleCoroutine = StartCoroutine(DelayedShowTotalAndStartCycle());
